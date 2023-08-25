@@ -1,54 +1,92 @@
-const nodemailer = require('nodemailer');
+let myHeaders = new Headers();
+myHeaders.append("Authorization", "Bearer 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");
+myHeaders.append("Content-Type", "application/json");
 
-// Create a transporter object using the default SMTP transport
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // e.g., 'Gmail', 'Outlook'
-  auth: {
-    user: 'your_email@example.com',
-    pass: 'your_email_password',
-  },
-});
 
-// Function to send email
-const sendEmail = (formData) => {
-  const htmlContent = `
+
+
+async function sendEmail(){
+
+  const fullName = document.getElementById('full-name').value;
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById('phone').value;
+  const fromAddress = document.getElementById('from-address').value;
+  const toAddress = document.getElementById('to-address').value;
+  const moveDetails = document.getElementById('move-details').value;
+
+  const formDataHTML = `
     <table>
       <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Message</th>
+        <th>Full Name</th>
+        <td>${fullName}</td>
       </tr>
       <tr>
-        <td>${formData.name}</td>
-        <td>${formData.email}</td>
-        <td>${formData.message}</td>
+        <th>Email</th>
+        <td>${email}</td>
+      </tr>
+      <tr>
+        <th>Phone</th>
+        <td>${phone}</td>
+      </tr>
+      <tr>
+        <th>From Address</th>
+        <td>${fromAddress}</td>
+      </tr>
+      <tr>
+        <th>To Address</th>
+        <td>${toAddress}</td>
+      </tr>
+      <tr>
+        <th>Move Details</th>
+        <td>${moveDetails}</td>
       </tr>
     </table>
   `;
 
-  const mailOptions = {
-    from: 'your_email@example.com',
-    to: 'recipient@example.com',
-    subject: 'New Form Submission',
-    html: htmlContent,
-  };
 
-  // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log('Error sending email:', error);
-    } else {
-      console.log('Email sent:', info.response);
+  let raw = JSON.stringify({
+    "personalizations": [
+      {
+        "to": [
+          {
+            "email": "yogeshkakkar521@gmail.com",
+            "name": "John Doe"
+          }
+        ],
+        "subject": "Hello, World!"
+      }
+    ],
+    "content": [
+      {
+        "type": "text/plain",
+        "value": "Heya!"
+      },
+      {
+        "type": "text/html",
+        "value": `${formDataHTML}`
+      }
+    ],
+    "from": {
+      "email": "Gurlal9646@gmail.com",
+      "name": "Gurlal Singh"
+    },
+    "reply_to": {
+      "email": "Gurlal9646@gmail.com",
+      "name": "Gurlal Singh"
     }
   });
+
+
+let requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
 };
 
-// Example form data
-const formData = {
-  name: 'John Doe',
-  email: 'johndoe@example.com',
-  message: 'Hello, this is a test email!',
-};
+  fetch("https://api.sendgrid.com/v3/mail/send", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 
-// Call the sendEmail function with the form data
-sendEmail(formData);
+}
