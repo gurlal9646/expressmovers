@@ -1,5 +1,5 @@
 let myHeaders = new Headers();
-myHeaders.append("Authorization", "Bearer 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");
+myHeaders.append("Authorization", "Bearer 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");
 myHeaders.append("Content-Type", "application/json");
 
 
